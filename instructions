@@ -1,0 +1,129 @@
+Step 1: Set Up the Environment
+Log in to AWS Management Console:
+
+Go to the AWS Management Console.
+Log in with your account credentials.
+Open AWS Cloud9:
+
+Search for Cloud9 in the search bar.
+Click on Cloud9 and then select Create environment.
+Configure the Cloud9 Environment:
+
+Name: Enter a name for your environment (e.g., lab4-env).
+Environment Settings: Choose the default settings.
+Click on Create environment.
+Step 2: Create a Repository in AWS CodeCommit
+Search for CodeCommit:
+
+Search for CodeCommit in the search bar.
+Click on CodeCommit.
+Create a New Repository:
+
+Click on Create repository.
+Name: Enter a name for the repository (e.g., lab4-app).
+Click on Create.
+Step 3: Set Up AWS CodeBuild
+Search for CodeBuild:
+
+Search for CodeBuild in the search bar.
+Click on CodeBuild.
+Create a New Build Project:
+
+Click on Create build project.
+Project Name: Enter a name for the project (e.g., lab4-build).
+Configure Source Settings:
+
+Source Provider: Select AWS CodeCommit.
+Repository: Choose the repository you created (e.g., lab4-app).
+Configure Environment Settings:
+
+Environment Image: Choose the environment image (default AWS image is recommended).
+Service Role: Choose to create a new role or use an existing one (recommended to create a new one).
+Click on Next.
+Buildspec Settings:
+
+Buildspec: Choose Insert build commands.
+Enter the following build commands in the buildspec.yml format:
+yaml
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.8
+    commands:
+      - echo Installing dependencies...
+      - pip install -r requirements.txt  # Ensure you have a requirements.txt file
+  build:
+    commands:
+      - echo Building the application...
+      - python -m unittest discover  # Adjust according to your build needs
+artifacts:
+  files:
+    - '**/*'  # Specify files to be archived
+Review and Create:
+
+Review your settings and click on Create build project.
+Step 4: Set Up AWS CodePipeline
+Search for CodePipeline:
+
+Search for CodePipeline in the search bar.
+Click on CodePipeline.
+Create a New Pipeline:
+
+Click on Create pipeline.
+Pipeline Name: Enter a name for the pipeline (e.g., lab4-pipeline).
+Configure Source Stage:
+
+Source Provider: Choose AWS CodeCommit.
+Repository: Select the repository you created (e.g., lab4-app).
+Branch: Choose the branch you want to deploy (e.g., main).
+Configure Build Stage:
+
+Build Provider: Choose AWS CodeBuild.
+Project Name: Select the build project you created earlier (e.g., lab4-build).
+Configure Deploy Stage (Optional):
+
+If you want to deploy your application, configure the deployment options (e.g., to an S3 bucket or ECS).
+Follow the prompts to set up the deployment.
+Review and Create:
+
+Review your pipeline settings and click on Create pipeline.
+Step 5: Test the Pipeline
+Push Changes to CodeCommit:
+
+Open the Cloud9 terminal and navigate to your project directory:
+
+bash
+cd ~/environment/lab4-app  # Adjust according to your project structure
+Initialize a Git repository if not done already:
+
+bash
+git init
+Add your files (ensure you have at least a simple Python application and requirements.txt):
+
+bash
+echo "print('Hello, World!')" > app.py  # Sample application
+echo "requests" > requirements.txt  # Sample dependency
+Stage and commit the changes:
+
+bash
+git add .
+git commit -m "Initial commit"
+Configure CodeCommit remote and push the changes:
+
+bash
+git remote add origin https://git-codecommit.<region>.amazonaws.com/v1/repos/lab4-app  # Replace <region>
+git push -u origin main  # Push to the main branch
+Check the Pipeline Execution:
+
+Go back to the AWS CodePipeline console.
+You should see the pipeline executing the build and deploy stages.
+Click on the pipeline name to view details about each stage.
+Step 6: View Build Logs
+Access AWS CodeBuild:
+Go to the CodeBuild section.
+Click on the project (e.g., lab4-build).
+Click on Build history to see recent builds.
+Click on a specific build to view logs and check for any errors.
+Additional Notes
